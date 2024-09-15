@@ -1,0 +1,64 @@
+/* DOTS */
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.dot-spinner {
+  display: flex;
+  gap: 10px;
+}
+
+.dot-spinner div {
+  width: 10px;
+  height: 10px;
+  background-color: rgb(13, 13, 14);
+  border-radius: 50%;
+  animation: dot-bounce 0.6s infinite alternate;
+}
+
+.dot-spinner div:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot-spinner div:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-bounce {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-10px);
+  }
+}
+
+/* SPINNER
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-left-color: #09f;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+*/

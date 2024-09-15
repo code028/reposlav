@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id       Int    @id @default(autoincrement())
+  name     String
+  username String @unique
+  email    String @unique
+  password String
+  role     ROLE   @default(user)
+
+  sessions     Sessions[]
+  universities University[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sessions {
+  id           Int     @id @default(autoincrement())
+  refreshToken String  @db.LongText
+  userAgent    String
+  active       Boolean @default(false)
+
+  browser String?
+  os      String?
+  device  String? @db.LongText
+
+  userId Int
+  user   Users @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ROLE {
+  user
+  admin
+  service
+}
+
+model University {
+  id        Int       @id @default(autoincrement())
+  name      String
+  location  String
+  faculties Faculty[]
+
+  ownerId Int
+  owner   Users @relation(fields: [ownerId], references: [id])
+}
+
+model Faculty {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  universityId Int
+  university   University @relation(fields: [universityId], references: [id])
+
+  departments Department[]
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  facultyId Int
+  faculty   Faculty @relation(fields: [facultyId], references: [id])
+}

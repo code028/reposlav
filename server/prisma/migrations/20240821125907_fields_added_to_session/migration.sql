@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `sessions` ADD COLUMN `browser` VARCHAR(191) NULL,
+    ADD COLUMN `device` VARCHAR(191) NULL,
+    ADD COLUMN `os` VARCHAR(191) NULL;

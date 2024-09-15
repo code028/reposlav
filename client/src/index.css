@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    .bg-primary-custom {
+        @apply bg-bg-l-primary dark:bg-bg-d-primary
+    } 
+    
+    .bg-secondary-custom {
+        @apply bg-bg-l-secondary dark:bg-bg-d-secondary
+    }
+    
+    .text-primary-custom {
+        @apply text-text-l-primary dark:text-text-d-primary
+    }
+
+    .text-secondary-custom {
+        @apply text-text-l-secondary dark:text-text-d-secondary
+    }
+
+    .text-link {
+        @apply text-text-l-secondary hover:text-black dark:text-text-d-secondary dark:hover:text-white
+    }
+}
+
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+    width: 4px;
+    scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar-track {
+    background: #f5f3f3; /* Light grey background */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #c4b9b9;
+    border-radius: 50px; 
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #c4b9b9; /* Darker grey on hover */
+}
