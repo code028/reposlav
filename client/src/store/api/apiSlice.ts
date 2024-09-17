@@ -67,6 +67,6 @@ export const apiSlice = createApi({
     baseQuery: baseQueryWithReauth,
     tagTypes: tags,
     endpoints: (builder) => ({}),
-    refetchOnMountOrArgChange: 15
+    refetchOnMountOrArgChange: true
 });
 

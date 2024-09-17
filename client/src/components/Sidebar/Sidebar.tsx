@@ -1,12 +1,13 @@
 import React from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useDarkMode } from '../../hooks/useDarkMode';
+// import { useDarkMode } from '../../hooks/useDarkMode';
 import { 
   Box, GraduationCap, ChartNoAxesColumn, ChartPie, UsersRound, 
   UserRound, BookOpen, Files, Archive, LogOut, CircleUserRound, 
   Fingerprint, 
   BadgePlus,
   BadgeHelp,
+  Captions,
 } 
 from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -20,10 +21,10 @@ interface ISidebar {
 }
 
 const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {  
-  const [theme, setTheme] = useDarkMode();
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+  // const [theme, setTheme] = useDarkMode();
+  // const toggleTheme = () => {
+  //   setTheme(theme === 'dark' ? 'light' : 'dark');
+  // };
 
   const sidebarItems = [
     { 
@@ -38,6 +39,7 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
       label: "Служба", 
       links: [
         {name: "Одсеци", href: "/departments/", icon: <ChartPie />}, 
+        {name: "Предмети", href: "/subjects/", icon: <Captions />}, 
         {name: "Професори", href: "/uni/add", icon: <UserRound />},
         {name: "Студенти", href: "http://localhost:3000/", icon: <UsersRound />},
       ] 
@@ -70,7 +72,7 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
   const refreshToken = useAppSelector((state) => state.session.refreshToken);
   const navigate = useNavigate();
 
-  const [logout, { isLoading }] = useLogoutMutation();
+  const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
     try {

@@ -1,5 +1,5 @@
 import { apiSlice } from './apiSlice';
-import { AddUniReq, GetUnisByOwner } from '../types/university';
+import { AddUniReq, GetUniById, GetUnisByOwner } from '../types/university';
 
 export const universityApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -16,9 +16,14 @@ export const universityApiSlice = apiSlice.injectEndpoints({
                 body: uniData
               }),
         }),
-       
+       getUniById: builder.query<GetUniById, string>({
+        query: (id) => ({
+            url: `/university/${id}`,
+            method: 'GET'
+        })
+       })
     }),
     overrideExisting: false,
 });
 
-export const { useAddUniversityMutation, useGetUnisByOwnerQuery  } = universityApiSlice;
+export const { useAddUniversityMutation, useGetUnisByOwnerQuery, useGetUniByIdQuery  } = universityApiSlice;

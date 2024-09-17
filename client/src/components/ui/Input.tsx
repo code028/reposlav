@@ -9,7 +9,7 @@ interface IInput {
     placeholder?: string,
     className?: string,
     value: any,
-    setValue: (value: any) => void,
+    setValue?: (value: any) => void,
     show?: boolean,
     setShow?: (show: boolean) => void,
     withPassForgot?: boolean,
@@ -23,8 +23,8 @@ const Input: React.FC<IInput> = ({id, label, type, placeholder, className, value
             <input 
                 id={id} 
                 type={type} 
-                value={value} 
-                onChange={(e) => setValue(e.target.value)} 
+                value={value || ''} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue!(e.target.value)} 
                 className={`py-1 px-3 rounded outline outline-[#9e9e9e] outline-1 focus:outline-offset-1 focus:outline-black dark:focus:outline-white focus:outline-[1px] ${className} text-primary-custom bg-primary-custom`} 
                 placeholder={placeholder} 
                 required 
@@ -41,8 +41,8 @@ const Input: React.FC<IInput> = ({id, label, type, placeholder, className, value
                     <input 
                         id={id} 
                         type={show ? 'text' : 'password'} 
-                        value={value} 
-                        onChange={(e) => setValue(e.target.value)} 
+                        value={value || ''} 
+                        onChange={(e) => setValue!(e.target.value)} 
                         className={`w-full py-1 px-3 rounded outline outline-[#9e9e9e] outline-1 focus:outline-offset-1 focus:outline-black dark:focus:outline-white focus:outline-[1px] ${className} text-primary-custom bg-primary-custom`} 
                         placeholder={placeholder} 
                         required 

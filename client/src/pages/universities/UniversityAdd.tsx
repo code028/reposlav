@@ -5,8 +5,11 @@ import Button from '../../components/ui/Button'
 import Input from '../../components/ui/Input'
 import { useAddUniversityMutation } from '../../store/api/universitySlice'
 import { useAppSelector } from '../../store/hooks'
+import { useNavigate } from 'react-router-dom'
 
 const UniversityAdd = () => {
+
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
   const [disabled, setDisabled] = useState(false);
@@ -22,6 +25,7 @@ const UniversityAdd = () => {
       const data = await addUni({ userId, name, location }).unwrap();
 
       setDisabled(false);
+      navigate('/universities');
 
     } catch (error) {
       console.error("University add failed", error);

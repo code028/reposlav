@@ -21,6 +21,13 @@ import ProtectedRoute from "./components/auth/RouteGuard";
 import RoleGuard from "./components/auth/RoleGuard";
 import Loader from "./components/ui/Loader/Loader";
 import GuestGuard from "./components/auth/GuestGuard";
+import CustomFacultyAdd from "./pages/faculties/customAdd";
+import SubjectHome from "./pages/subjects/SubjectHome";
+import SubjectAdd from "./pages/subjects/SubjectAdd";
+import SubjectShow from "./pages/subjects/SubjectShow";
+import SubjectEdit from "./pages/subjects/SubjectEdit";
+import CustomDepartmentAdd from "./pages/departments/CustomDepartmentAdd";
+import Profile from "./pages/Profile";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -43,19 +50,25 @@ function App() {
           {/* Protected routes */}
           <Route element={<ProtectedRoute />} >
             <Route path="/" element={<Home />} />
+            <Route path="/profile" element={<Profile />} />
 
             {/* Role protected routes */}
             <Route element={<RoleGuard requiredRoles={['admin','service']} />}>
               <Route path="/auth/register" element={<Register />} />
-              {/* Faculties */}
-              <Route path="/faculties/" element={<FacultyHome />} />
-              <Route path="uni/:id/fac/:id" element={<FacultyShow />} />
                 
               {/* Departments */}
               <Route path="/departments/" element={<DepartmentHome />} />
-              <Route path="uni/:id/fac/:id/dep/:id" element={<DepartmentShow />} />
-              <Route path="uni/:id/fac/:id/dep/add" element={<DepartmentAdd />} />
-              <Route path="uni/:id/fac/:id/dep/:id" element={<DepartmentEdit />} />
+              <Route path="/uni/:uniId/fac/:facId/dep/:depId" element={<DepartmentShow />} />
+              <Route path="/uni/:uniId/fac/:facId/dep/add" element={<DepartmentAdd />} />
+              <Route path="/dep/add" element={<CustomDepartmentAdd />} />
+              
+              <Route path="/uni/:uniId/fac/:facId/dep/:depId/edit" element={<DepartmentEdit />} />
+
+              {/* Subjects */}
+              <Route path="/subjects/" element={<SubjectHome />} />
+              <Route path="/sub/:id/" element={<SubjectShow />} />
+              <Route path="/sub/add" element={<SubjectAdd/>} />
+              <Route path="/sub/:id/edit" element={<SubjectEdit />} />
             </Route>
             
             <Route element={<RoleGuard requiredRoles={['admin']} />}>
@@ -65,9 +78,13 @@ function App() {
               <Route path="/uni/add" element={<UniversityAdd />} />
               <Route path="/uni/:id/edit" element={<UniversityEdit />} />
 
-              {/* Faculty add/edit */}
-              <Route path="uni/:id/fac/add" element={<FacultyAdd />} />
-              <Route path="uni/:id/fac/:id/edit" element={<FacultyEdit />} />
+              {/* Faculty */}
+              <Route path="/uni/:id/fac/add" element={<FacultyAdd />} />
+              <Route path="/uni/:id/fac/:id/edit" element={<FacultyEdit />} />
+              <Route path="/faculty/add" element={<CustomFacultyAdd />} />
+              <Route path="/uni/:id/fac/:id2" element={<FacultyShow />} />
+
+              <Route path="/faculties/" element={<FacultyHome />} />
             </Route>
           </Route>
 

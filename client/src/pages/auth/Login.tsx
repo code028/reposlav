@@ -40,7 +40,6 @@
         if( role === 'admin' ) navigate('/universities/')
           
       } catch (error) {
-        console.error("Login failed:", error);
         setDisabled(false);
       }
     };

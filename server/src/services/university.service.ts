@@ -44,3 +44,28 @@ export const getAllUniversitiesByOwner = async( ownerId: number) => {
 
     return {universities};
 }
+
+export const getUniById = async( id: number) => {
+
+    const university = await prisma.university.findUnique({
+        where:{
+            id: id
+        },
+        include: {
+            faculties: true
+        }
+    });
+
+    const faculties = await prisma.faculty.findMany({
+        where: {
+            universityId: id
+        },
+        include: {
+            departments: true
+        }
+    });
+
+    if(!university) return newError(404, "University doesnt exist!");
+
+    return {university, faculties}
+}

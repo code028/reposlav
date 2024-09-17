@@ -12,6 +12,10 @@ import { universityRouter } from "./routers/university.route";
 import { userRouter } from "./routers/user.route";
 import authGuard from "./auth/authGuard";
 import roleGuard from "./auth/roleGuard";
+import { facultyRouter } from "./routers/faculty.route";
+import { departmentRouter } from "./routers/department.route";
+import { subjectRouter } from "./routers/subjects.route";
+import { serviceRouter } from "./routers/service.route";
 
 export default function (app: Express) {
     app.get("/status", (req: Request, res: Response) => {
@@ -24,6 +28,10 @@ export default function (app: Express) {
     app.use("/user", authGuard, userRouter);
     
     app.use("/university", authGuard, roleGuard({requiredRoles: ['admin']}), universityRouter);
+    app.use("/faculty", authGuard, roleGuard({requiredRoles: ['admin']}), facultyRouter);
+    app.use("/department", authGuard, roleGuard({requiredRoles: ['admin','service']}), departmentRouter);
+    app.use("/service", authGuard, roleGuard({requiredRoles: ['admin','service']}), serviceRouter);
+    app.use("/subject", authGuard, roleGuard({requiredRoles: ['admin','service']}), subjectRouter);
 
     // Page doesn`t exist
     app.get("*", (req: Request, res: Response) => {

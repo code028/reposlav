@@ -158,3 +158,30 @@ export const getUserRole = async (id: number) => {
     if (!userExist) newError(404, "User doesn`t exist");
     return {role: userExist?.role};
 }
+
+export const getUserById = async (id: number, refreshToken: string) => {
+    const userExist = await prisma.users.findFirst({
+        where: {
+            id
+        }
+    });
+    
+    const currentSession = await prisma.sessions.findFirst({
+        where: {
+            refreshToken
+        }
+    })
+
+    if (!userExist) newError(404, "User doesn`t exist");
+    
+    const user = {
+        id: userExist?.id,
+        name: userExist?.name,
+        username: userExist?.username,
+        email: userExist?.email,
+        createdAt: userExist?.createdAt,
+        lastSeen: currentSession?.createdAt
+    }
+
+    return {user,session: currentSession};
+}

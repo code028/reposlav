@@ -1,26 +1,35 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MainLayout from '../../components/layouts/MainLayout'
 import FormContainer from '../../components/containers/Form';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
+import { useGetUniByIdQuery } from '../../store/api/universitySlice';
+import { University } from '../../store/types/university';
+import { useAddFacultyMutation } from '../../store/api/facultySlice';
 
 const FacultyAdd = () => {
-  const [university, setUniversity] = useState("");
+  const navigate = useNavigate();
+  const [university, setUniversity] = useState<University>();
   const [name, setName] = useState("");
   const [disabled, setDisabled] = useState(false);
 
   const {id} = useParams();
 
-  useEffect(()=>{setUniversity(id!)},[])
+  const {data} = useGetUniByIdQuery(id!);
+  const [addFaculty] = useAddFacultyMutation();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  useEffect(()=>{setUniversity(data?.university)},[data?.university])
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     event.stopPropagation();
     setDisabled(true);
 
-    console.log({university,name})
-    console.log({ FacultyAdd : "Connection not finished!" });
+    await addFaculty({id: parseInt(id!),name: name}).unwrap();
+    setDisabled(false);
+    console.log({university, name})
+    navigate(`/uni/${id}`);
   };
 
   return (
@@ -29,7 +38,7 @@ const FacultyAdd = () => {
         <FormContainer className='bg-gray-300 bg-opacity-50'>
           <form method="POST" onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-y-3">
-              <Input id="university" type="text" label="Назив Универзитета" disabled  value={university} setValue={setUniversity} className='text-gray-500'/>
+              <Input id="university" type="text" label="Назив Универзитета" disabled  value={data?.university.name} setValue={setUniversity} className='text-gray-500'/>
               <Input id="name" type="text" label="Назив факултета"  value={name} setValue={setName}/>
             </div>
             <Button type="submit" disabled={disabled} children="Додај факултет" />

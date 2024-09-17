@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import MainLayout from '../../components/layouts/MainLayout'
-import { GraduationCap, MapPin, Search, UniversityIcon } from 'lucide-react';
+import { Edit, Eye, GraduationCap, MapPin, Plus, Search, UniversityIcon } from 'lucide-react';
 import { useGetUnisByOwnerQuery } from '../../store/api/universitySlice';
 import { useAppSelector } from '../../store/hooks';
 import { GetUnisByOwner, University } from '../../store/types/university';
@@ -32,7 +32,7 @@ const UniversityHome = () => {
         <div className="w-full max-w-7xl">
           {/* Naslov i pretrazivanje */}
           <div className="w-full flex flex-col md:flex-row justify-between items-center py-6">
-            <div className="text-3xl font-bold flex items-center gap-2 text-center md:text-left mb-4 md:mb-0">
+            <div className="text-3xl font-bold flex items-center gap-5 text-center md:text-left mb-4 md:mb-0">
               <UniversityIcon className="w-8 h-8 text-blue-600" />
               Универзитети
             </div>
@@ -50,6 +50,12 @@ const UniversityHome = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+          </div>
+          <div className='w-full flex justify-end'>
+            <Link to={"/uni/add"} className="flex items-center px-5 py-3 bg-black bg-opacity-80 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-indigo-600 transition-all duration-300">
+              <Plus className="w-6 h-6 mr-2" />
+              Додај Универзитет
+            </Link>
           </div>
 
           {/* Kartice sa univerzitetima */}
@@ -76,17 +82,23 @@ const UniversityHome = () => {
                   <div className="mt-4">
                     <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                       <GraduationCap className="w-6 h-6 text-green-500" />
-                      {uni.faculties?.length || 0} {uni.faculties?.length === 1 ? 'Faculty' : 'Faculties'}
+                      {uni.faculties?.length || 0} {uni.faculties?.length === 1 ? 'Факултет' : 'Факултета'}
                     </h3>
                   </div>
-                  {/* Dugme za detalje */}
-                  <Link to={`/uni/${uni.id}/`} className="mt-auto bg-black bg-opacity-80 text-white py-2 px-4 rounded-lg hover:bg-opacity-100 transition duration-200">
-                    Погледај
-                  </Link>
+                  <div className='w-full flex gap-3 justify-center items-center'>
+                    {/* Dugme za detalje */}
+                    <Link to={`/uni/${uni.id}`} className="w-1/2 flex justify-center items-center mt-auto bg-black bg-opacity-80 text-white py-2 px-4 rounded-lg hover:bg-opacity-100 transition duration-200">
+                      <Eye />
+                    </Link>
+                    {/* Dugme za edit */}
+                    <Link to={`/uni/${uni.id}/edit`} className="w-1/2 flex justify-center items-center mt-auto bg-black bg-opacity-80 text-white py-2 px-4 rounded-lg hover:bg-opacity-100 transition duration-200">
+                      <Edit />
+                    </Link>
+                  </div>
                 </div>
               ))
             ) : (
-              <div className="col-span-full text-center text-gray-500 italic">No universities found.</div>
+              <div className="flex flex-1 justify-center items-center col-span-full text-center text-gray-500">Тражени универзитети не постоје</div>
             )}
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllUniversitiesByOwner, registerUniversity } from "../services/university.service";
+import { getAllUniversitiesByOwner, getUniById, registerUniversity } from "../services/university.service";
 import { formatValidationErrors } from "../utils/validation";
 
 export const handleUniversityAdd = async (req: Request, res: Response) => {
@@ -29,6 +29,17 @@ export const handleGetAllUniversitiesByOwner = async (req: Request, res: Respons
         const response = await getAllUniversitiesByOwner(userId);
         return res.send(response);
         
+    } catch (error: any) {
+        return res.status(error.status || 500).send(error || "Internal server error");
+    }
+}
+
+export const handleGetUniById = async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+        const uniId = parseInt(id); 
+        const response = await getUniById(uniId);
+        return res.send(response);
     } catch (error: any) {
         return res.status(error.status || 500).send(error || "Internal server error");
     }

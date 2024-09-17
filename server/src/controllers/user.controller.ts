@@ -7,7 +7,8 @@ import {
     logoutUser, 
     createNewAccessToken, 
     registerUser, 
-    getUserRole
+    getUserRole,
+    getUserById
 } from "../services/user.service";
 
 // Validations
@@ -90,6 +91,19 @@ export const handleGetUserRole = async (req: Request, res: Response) => {
         const {id} =  req.params;
         const parsedId = parseInt(`${id}`);
         const response = await getUserRole(parsedId);
+        return res.send(response);
+        
+    } catch (error: any) {
+        return res.status(error.status || 500).send(error || "Internal server error");
+    }
+} 
+
+export const handleGetUserById = async (req: Request, res: Response) => {
+    try {
+        const {id} =  req.params;
+        const {refreshToken} =  req.query;
+        const parsedId = parseInt(`${id}`);
+        const response = await getUserById(parsedId, refreshToken?.toString()!);
         return res.send(response);
         
     } catch (error: any) {
