@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { addFaculty, getFacultyById } from "../services/faculty.service";
+import { addFaculty, addStudentToFaculty, getFacultyById, getFacultyStudent } from "../services/faculty.service";
+import newError from "../utils/newError";
 
 export const handleFacultyAdd = async (req: Request, res: Response) => {
     try {
@@ -12,6 +13,7 @@ export const handleFacultyAdd = async (req: Request, res: Response) => {
         return res.status(error.status || 500).send(error || "Internal server error");
     }
 }
+
 export const handleGetFacultyById = async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
@@ -19,6 +21,29 @@ export const handleGetFacultyById = async (req: Request, res: Response) => {
         const response = await getFacultyById(facId);
         return res.send(response);
 
+    } catch (error: any) {
+        return res.status(error.status || 500).send(error || "Internal server error");
+    }
+}
+
+export const handleAddStudentToFaculty = async (req: Request, res: Response) => {
+    try {
+        const {userId, facultyId} = req.body;
+        const response = await addStudentToFaculty(parseInt(userId), parseInt(facultyId));
+        return res.send(response);
+        
+    } catch (error: any) {
+        return res.status(error.status || 500).send(error || "Internal server error");
+    }
+}
+
+export const handleGetFacultyStudents = async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+        const parsedId = parseInt(id);
+        const response = await getFacultyStudent(parsedId);
+        return res.send(response);
+        
     } catch (error: any) {
         return res.status(error.status || 500).send(error || "Internal server error");
     }

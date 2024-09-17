@@ -15,7 +15,7 @@ export const addDepartment = async (id: number, name: string, type: string) => {
         }
     })
 
-    return {department};
+    return { department };
 }
 
 export const getDepartmentById = async (id: number) => {
@@ -38,7 +38,7 @@ export const getDepartmentById = async (id: number) => {
     if (!department) newError(404, "Department not found!");
     if (!university) newError(404, "University not found!");
 
-    return {department, university};
+    return { department, university };
 }
 
 export const getFacsByServiceWhereUserId = async (userId: number) => {
@@ -48,9 +48,9 @@ export const getFacsByServiceWhereUserId = async (userId: number) => {
             id: userId
         }
     })
-    if(!user) newError(404, 'User not found!');
+    if (!user) newError(404, 'User not found!');
     let faculties
-    if(user?.role == 'service'){
+    if (user?.role == 'service') {
         faculties = await prisma.faculty.findMany({
             where: {
                 service: {
@@ -87,7 +87,7 @@ export const getFacsByServiceWhereUserId = async (userId: number) => {
                 }
             }
         });
-    }else if(user?.role == 'admin'){
+    } else if (user?.role == 'admin') {
         faculties = await prisma.faculty.findMany({
             where: {
                 university: {
@@ -124,6 +124,52 @@ export const getFacsByServiceWhereUserId = async (userId: number) => {
     return { faculties };
 }
 
+export const getProfessorsOnFacultyByDepId = async (depId: number) => {
+    const professorsOnDep = await prisma.professorsOnDepartments.findMany({
+        where: {
+            departmentId: depId
+        },
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    username: true
+                }
+            }
+        }
+    });
+
+    return { professorsOnDep };
+};
+
+export const getAllProfessorsOnDeps = async () => {
+    try {
+        const professorsOnDep = await prisma.professorsOnDepartments.findMany({
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                    },
+                },
+                department: {
+                    select: {
+                        id: true,
+                        name: true,
+                        facultyId: true,
+                    },
+                },
+            },
+        });
+        return professorsOnDep;
+    } catch (error) {
+        console.error("Greška u dohvatanju profesora na odsecima:", error);
+        throw new Error("Greška u upitu");
+    }
+};
+
 
 export const subjectAddToDepartment = async (subjectId: number, departmentId: number) => {
 
@@ -138,7 +184,7 @@ export const subjectAddToDepartment = async (subjectId: number, departmentId: nu
     });
 
 
-    if(subjectAlreadyOnDep) newError(403, `Subject already on ${subjectAlreadyOnDep.name}`);
+    if (subjectAlreadyOnDep) newError(403, `Subject already on ${subjectAlreadyOnDep.name}`);
 
     const addSubjectToDep = await prisma.subjectsOnDepartments.create({
         data: {
@@ -148,4 +194,25 @@ export const subjectAddToDepartment = async (subjectId: number, departmentId: nu
     });
 
     return { addSubjectToDep };
+}
+
+export const addProfToDep = async (userId: number, depId: number) => {
+
+    const profAlreadyOnDep = await prisma.professorsOnDepartments.findFirst({
+        where: {
+            departmentId: depId,
+            userId
+        }
+    });
+
+    if (profAlreadyOnDep) newError(403, "Profesor exist on that department")
+
+    const AddProfToDep = await prisma.professorsOnDepartments.create({
+        data: {
+            departmentId: depId,
+            userId
+        }
+    });
+
+    return { ProfesorOnDep: AddProfToDep };
 }

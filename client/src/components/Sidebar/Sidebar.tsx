@@ -21,6 +21,7 @@ interface ISidebar {
 }
 
 const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {  
+  // const userRole = useAppSelector(state => state.user.role);
   // const [theme, setTheme] = useDarkMode();
   // const toggleTheme = () => {
   //   setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -40,8 +41,10 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
       links: [
         {name: "Одсеци", href: "/departments/", icon: <ChartPie />}, 
         {name: "Предмети", href: "/subjects/", icon: <Captions />}, 
-        {name: "Професори", href: "/uni/add", icon: <UserRound />},
-        {name: "Студенти", href: "http://localhost:3000/", icon: <UsersRound />},
+        {name: "Професори", href: "/professors/", icon: <UserRound />},
+        {name: "Студенти", href: "/students/", icon: <UsersRound />},
+        {name: "Региструј Студента", href: "/register/student", icon: <UsersRound />},
+        {name: "Додај Студента", href: "/stud/add", icon: <UsersRound />},
       ] 
     },
     { 

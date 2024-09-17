@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Subject, useAddSubjectMutation } from '../../store/api/subjectSlice';
+import { SubjectAddRes, useAddSubjectMutation } from '../../store/api/subjectSlice';
 import { useAppSelector } from '../../store/hooks';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
@@ -13,7 +13,7 @@ export type UniversityResponse = {
   universities: University[];
 };
 
-type University = {
+export type University = {
   id: number;
   name: string;
   location: string;
@@ -41,7 +41,6 @@ type Department = {
   type: 'osnovne' | 'master';
   facultyId: number;
 };
-
 
 const SubjectAdd = () => {
   const navigate =  useNavigate();
@@ -103,7 +102,7 @@ const SubjectAdd = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const subject: Subject  = await addSubject({
+      const subject: SubjectAddRes  = await addSubject({
         name: subjectName,
         espb: parseInt(espbPoints),
         code: subjectCode,

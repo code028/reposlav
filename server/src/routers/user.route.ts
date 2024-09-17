@@ -4,6 +4,7 @@ import express from "express";
 import { 
 	handleGetUserById,
 	handleGetUserRole,
+	handleGetUsersByRole,
 } from "../controllers/user.controller";
 
 // Validations
@@ -16,5 +17,6 @@ const router = express.Router({mergeParams: true});
 router
 	.get('/:id', handleGetUserById)
 	.get('/:id/role', handleGetUserRole)
+	.get('/:role/all', handleGetUsersByRole)
 
 export {router as userRouter};

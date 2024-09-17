@@ -28,6 +28,17 @@ import SubjectShow from "./pages/subjects/SubjectShow";
 import SubjectEdit from "./pages/subjects/SubjectEdit";
 import CustomDepartmentAdd from "./pages/departments/CustomDepartmentAdd";
 import Profile from "./pages/Profile";
+import RegisterService from "./pages/auth/RegisterService";
+import RegisterProfessor from "./pages/auth/RegisterProfessor";
+import StudentAdd from "./pages/students/StudentAdd";
+import ProfessorAdd from "./pages/professors/ProfessorAdd";
+import StudentHome from "./pages/students/StudentHome";
+import StudentEdit from "./pages/students/StudentEdit";
+import StudentShow from "./pages/students/StudentShow";
+import ProfessorEdit from "./pages/professors/ProfessorEdit";
+import ProfessorShow from "./pages/professors/ProfessorShow";
+import ProfessorHome from "./pages/professors/ProfessorHome";
+
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -54,7 +65,9 @@ function App() {
 
             {/* Role protected routes */}
             <Route element={<RoleGuard requiredRoles={['admin','service']} />}>
-              <Route path="/auth/register" element={<Register />} />
+              <Route path="/auth/register/student" element={<Register />} />
+              <Route path="/auth/register/service" element={<RegisterService />} />
+              <Route path="/auth/register/professor" element={<RegisterProfessor />} />
                 
               {/* Departments */}
               <Route path="/departments/" element={<DepartmentHome />} />
@@ -69,6 +82,25 @@ function App() {
               <Route path="/sub/:id/" element={<SubjectShow />} />
               <Route path="/sub/add" element={<SubjectAdd/>} />
               <Route path="/sub/:id/edit" element={<SubjectEdit />} />
+
+              {/* Profesor & Student registration*/}
+              <Route path="/register/professor" element={<RegisterProfessor />} />
+              <Route path="/register/student" element={<Register />} />
+
+              {/* Profesor & Student add [onDepartmetns / onFaculty] */}
+              <Route path="/prof/add" element={<ProfessorAdd />} />
+              <Route path="/stud/add" element={<StudentAdd />} />
+
+              {/* Professors */}
+              <Route path="/professors/" element={<ProfessorHome />} />
+              <Route path="/prof/:id/edit" element={<ProfessorEdit />} />
+              <Route path="/prof/:id" element={<ProfessorShow />} />
+
+              {/* Students */}
+              <Route path="/students/" element={<StudentHome />} />
+              <Route path="/stud/:id/edit" element={<StudentEdit />} />
+              <Route path="/stud/:id" element={<StudentShow />} />
+              
             </Route>
             
             <Route element={<RoleGuard requiredRoles={['admin']} />}>
@@ -83,8 +115,9 @@ function App() {
               <Route path="/uni/:id/fac/:id/edit" element={<FacultyEdit />} />
               <Route path="/faculty/add" element={<CustomFacultyAdd />} />
               <Route path="/uni/:id/fac/:id2" element={<FacultyShow />} />
-
               <Route path="/faculties/" element={<FacultyHome />} />
+
+              <Route path="/register/service" element={<RegisterService />} />
             </Route>
           </Route>
 

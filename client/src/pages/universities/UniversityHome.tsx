@@ -3,7 +3,7 @@ import MainLayout from '../../components/layouts/MainLayout'
 import { Edit, Eye, GraduationCap, MapPin, Plus, Search, UniversityIcon } from 'lucide-react';
 import { useGetUnisByOwnerQuery } from '../../store/api/universitySlice';
 import { useAppSelector } from '../../store/hooks';
-import { GetUnisByOwner, University } from '../../store/types/university';
+import { University } from '../../store/types/university';
 import { Link } from 'react-router-dom';
 
 

@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
 
 // Controller functions
-import { handleRegister } from "./controllers/user.controller";
+import { handleRegister, handleRegisterWithRoleProfessor, handleRegisterWithRoleService } from "./controllers/user.controller";
 
 // Validations
 import { registerValidation } from "./validations/user.validation";
@@ -21,14 +21,22 @@ export default function (app: Express) {
     app.get("/status", (req: Request, res: Response) => {
         res.status(200).json({"status": 200,"message": "The server is operating normally"});
     });
-    
-    app.post("/register", registerValidation, handleRegister)
 
+    // Route for user reg with role => user => student
+    app.post("/register", authGuard, roleGuard({requiredRoles:['admin', 'service']}), registerValidation, handleRegister);
+
+    // Route for user reg with role => professor
+    app.post("/register/user/professor", authGuard, roleGuard({requiredRoles:['admin', 'service']}), registerValidation, handleRegisterWithRoleProfessor);
+
+    // Route for user reg with role => service
+    app.post("/register/user/service", authGuard, roleGuard({requiredRoles:['admin']}), registerValidation, handleRegisterWithRoleService);
+    
+    
     app.use("/auth", sessionRouter);
     app.use("/user", authGuard, userRouter);
     
-    app.use("/university", authGuard, roleGuard({requiredRoles: ['admin']}), universityRouter);
-    app.use("/faculty", authGuard, roleGuard({requiredRoles: ['admin']}), facultyRouter);
+    app.use("/university", authGuard, roleGuard({requiredRoles: ['admin', 'service']}), universityRouter);
+    app.use("/faculty", authGuard, facultyRouter);
     app.use("/department", authGuard, roleGuard({requiredRoles: ['admin','service']}), departmentRouter);
     app.use("/service", authGuard, roleGuard({requiredRoles: ['admin','service']}), serviceRouter);
     app.use("/subject", authGuard, roleGuard({requiredRoles: ['admin','service']}), subjectRouter);

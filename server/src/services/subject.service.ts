@@ -35,3 +35,73 @@ export const getSubjectById = async (id: number) => {
     
     return subject;
 }
+
+export const getDepsOnFacsWhereServiceHasUserWithId = async (userId: number) => {
+    const user = await prisma.users.findUnique({
+        where: {
+            id: userId
+        }
+    })
+    if(!user) newError(404, 'User not found!');
+
+    const universities = await prisma.university.findMany({
+        where: {
+            faculties: {
+                some: {
+                    departments: {
+                        some: {
+                            faculty: {
+                                service: {
+                                    users: {
+                                        some: {
+                                            user: {
+                                                id: userId
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        include: {
+            faculties: {
+                where: {
+                    service: {
+                        users: {
+                            some: {
+                                userId
+                            }
+                        }
+                    }
+                },
+                include: {
+                    departments: {
+                        where: {
+                            faculty: {
+                                service: {
+                                    users: {
+                                        some: {
+                                            userId
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        include: {
+                            subjects: {
+                                include: {
+                                    subject: true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
+    });
+    
+    return {universities};  
+}

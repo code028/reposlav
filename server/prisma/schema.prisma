@@ -18,6 +18,8 @@ model Users {
   sessions     Sessions[]
   universities University[]
   service      UsersOnService[]
+  profesors    ProfessorsOnDepartments[]
+  students     StudentsOnFaculties[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -43,6 +45,7 @@ model Sessions {
 enum ROLE {
   user
   admin
+  professor
   service
 }
 
@@ -61,7 +64,8 @@ model Faculty {
   name String
 
   universityId Int
-  university   University @relation(fields: [universityId], references: [id])
+  university   University            @relation(fields: [universityId], references: [id])
+  students     StudentsOnFaculties[]
 
   departments Department[]
   service     Service?
@@ -71,20 +75,21 @@ model Department {
   id   Int    @id @default(autoincrement())
   name String
 
-  subjects SubjectsOnDepartments[]
-  type     String                  @default("osnovne")
+  subjects  SubjectsOnDepartments[]
+  type      String                    @default("osnovne")
+  profesors ProfessorsOnDepartments[]
 
   facultyId Int
   faculty   Faculty @relation(fields: [facultyId], references: [id])
 }
 
 model Subject {
-  id          Int                     @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   name        String
   code        String
   espb        Int
-  description String                  @db.LongText
-  
+  description String @db.LongText
+
   departments SubjectsOnDepartments[]
 }
 
@@ -113,4 +118,25 @@ model UsersOnService {
   serviceId Int
 
   @@id([userId, serviceId])
+}
+
+// Users <=> Department => ProfessorsOnDepartments
+model ProfessorsOnDepartments {
+  userId       Int
+  user         Users      @relation(fields: [userId], references: [id])
+  departmentId Int
+  department   Department @relation(fields: [departmentId], references: [id])
+
+  @@unique([userId, departmentId])
+}
+
+// Users <=> Faculties => StudentOnFaculties
+model StudentsOnFaculties {
+  userId    Int
+  user      Users   @relation(fields: [userId], references: [id])
+  facultyId Int
+  faculty   Faculty @relation(fields: [facultyId], references: [id])
+
+  @@unique([userId, facultyId])
+  @@map("Students")
 }

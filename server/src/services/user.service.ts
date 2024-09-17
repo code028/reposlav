@@ -39,6 +39,66 @@ export const registerUser = async (userData: IRegisterUser) => {
     return fields;
 }
 
+export const registerUserWithRoleProfessor = async (userData: IRegisterUser) => {
+    const { name, username, email, password } = userData;
+
+    // Check if user exist in db 
+    const user = await prisma.users.findFirst({
+        where: {
+            OR: [{ username }, { email }]
+        }
+    });
+
+    if (user) newError(400, "Bad request | USER EXIST!");
+
+    const hashPassword = await bcrypt.hash(password, parseInt(`${process.env.SALT}`))
+    const role = "professor"
+    // Create new user
+    const newUser = await prisma.users.create({
+        data: {
+            name,
+            username,
+            email,
+            password: hashPassword,
+            role: role
+        }
+    });
+
+    const { password: pass, ...fields } = newUser;
+    return fields;
+}
+
+export const registerUserWithRoleService = async (userData: IRegisterUser) => {
+    const { name, username, email, password } = userData;
+
+    // Check if user exist in db 
+    const user = await prisma.users.findFirst({
+        where: {
+            OR: [{ username }, { email }]
+        }
+    });
+
+    if (user) newError(400, "Bad request | USER EXIST!");
+
+    const hashPassword = await bcrypt.hash(password, parseInt(`${process.env.SALT}`))
+    const role = "service"
+    console.log(role);
+    // Create new user
+    const newUser = await prisma.users.create({
+        data: {
+            name,
+            username,
+            email,
+            password: hashPassword,
+            role: role
+        }
+    });
+    console.log(newUser.role);
+
+    const { password: pass, ...fields } = newUser;
+    return fields;
+}
+
 export const loginUser = async (userData: ILoginUser, userAgent: string) => {
     const { login, password } = userData;
 
@@ -157,6 +217,23 @@ export const getUserRole = async (id: number) => {
 
     if (!userExist) newError(404, "User doesn`t exist");
     return {role: userExist?.role};
+}
+
+export const getUsersByRole = async (role: any) => {
+    const usersExist = await prisma.users.findMany({
+        where: {
+            role
+        },
+        select: {
+            id:true,
+            name: true,
+            username: true,
+            email: true,
+        }
+    });
+
+    if (!usersExist) newError(404, "User doesn`t exist");
+    return {users: usersExist};
 }
 
 export const getUserById = async (id: number, refreshToken: string) => {

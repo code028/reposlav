@@ -16,7 +16,7 @@ export interface Department{
 }
 
 export interface Faculty {
-    id: string;
+    id: nubmer;
     name: string;
     universityId: string;
     departments: Department[]

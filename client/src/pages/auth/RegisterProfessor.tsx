@@ -5,12 +5,11 @@ import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 import { z } from "zod";
 import MainLayout from "../../components/layouts/MainLayout";
-import { useCreateUserMutation } from "../../store/api/userSlice";
+import { useCreateUserWithProfessorRoleMutation } from "../../store/api/userSlice";
 import { useNavigate } from "react-router-dom";
 
-const Register = () => {
+const RegisterProfessor = () => {
   const navigate = useNavigate();
-  
   const [disabled, setDisabled] = useState(false);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
@@ -54,7 +53,7 @@ const Register = () => {
     }
   };
 
-  const [createUser, /*{ isLoading, isError, isSuccess }*/] = useCreateUserMutation();
+  const [createProfessorUser, /*{ isLoading, isError, isSuccess }*/] = useCreateUserWithProfessorRoleMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -70,8 +69,8 @@ const Register = () => {
         password: "",
       });
       setShowPass(false);
-      await createUser({ name, username, email, password });
-      navigate('/students/');
+      await createProfessorUser({ name, username, email, password });
+      navigate('/professors/');
     } catch (error) {
       if (error instanceof z.ZodError) {
         const errorMessages = error.format();
@@ -97,16 +96,16 @@ const Register = () => {
         <FormContainer>
           <form method="POST" onSubmit={handleSubmit}>
             <div className="w-full flex flex-col gap-y-3">
-              <Input id="name" type="text" label="Име и презиме"  value={name} setValue={(value) => { setName(value); validateField("name", value)}} placeholder="Јован Мифтари"/>
+              <Input id="name" type="text" label="Име и презиме"  value={name} setValue={(value) => { setName(value); validateField("name", value)}} placeholder="Марко Смилић"/>
               {errors.name && <p className="text-red-500">{errors.name}</p>}
-              <Input id="username" type="text" label="Корисничко име"  value={username}  setValue={(value) => { setUsername(value); validateField("username", value)}} placeholder="SefoviOdseka2050"/>
+              <Input id="username" type="text" label="Корисничко име"  value={username}  setValue={(value) => { setUsername(value); validateField("username", value)}} placeholder="marko2369"/>
               {errors.username && <p className="text-red-500">{errors.username}</p>}
-              <Input id="email" type="email" label="Е-пошта"  value={email} setValue={(value) => { setEmail(value); validateField("email", value)}} placeholder="simel.isailovic@gmail.com"/>
+              <Input id="email" type="email" label="Е-пошта"  value={email} setValue={(value) => { setEmail(value); validateField("email", value)}} placeholder="marko.smilic@pr.ac.rs"/>
               {errors.email && <p className="text-red-500">{errors.email}</p>}
               <Input id="password" type="password" label="Лозинка"  value={password} setValue={(value) => { setPassword(value); validateField("password", value)}} show={showPass} setShow={setShowPass} placeholder="********" />
               {errors.password && <p className="text-red-500">{errors.password}</p>}
             </div>
-            <Button type="submit" disabled={disabled} children={'Региструј студентски налог'} className="mt-5" />
+            <Button type="submit" disabled={disabled} children={'Региструј професорски налог'} className="mt-5" />
           </form>
         </FormContainer>
       </Container>
@@ -114,4 +113,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterProfessor;
