@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { addFaculty, addStudentToFaculty, getFacultyById, getFacultyStudent } from "../services/faculty.service";
+import { addFaculty, addStudentToFaculty, getFacultyById, getFacultyStudent, getUnisWithFacsAndStudentsWhereFacsHasServerAndServiceHasUserWithId } from "../services/faculty.service";
 import newError from "../utils/newError";
 
 export const handleFacultyAdd = async (req: Request, res: Response) => {
@@ -42,6 +42,18 @@ export const handleGetFacultyStudents = async (req: Request, res: Response) => {
         const {id} = req.params;
         const parsedId = parseInt(id);
         const response = await getFacultyStudent(parsedId);
+        return res.send(response);
+        
+    } catch (error: any) {
+        return res.status(error.status || 500).send(error || "Internal server error");
+    }
+}
+
+export const handleGetUnisWithFacsAndStudentsWhereFacsHasServerAndServiceHasUserWithId = async (req: Request, res: Response) => {
+    try {
+        const {id} = req.params;
+        const parsedId = parseInt(id);
+        const response = await getUnisWithFacsAndStudentsWhereFacsHasServerAndServiceHasUserWithId(parsedId);
         return res.send(response);
         
     } catch (error: any) {

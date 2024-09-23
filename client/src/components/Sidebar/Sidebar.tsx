@@ -8,6 +8,7 @@ import {
   BadgePlus,
   BadgeHelp,
   Captions,
+  FolderKanban,
 } 
 from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -43,8 +44,6 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
         {name: "Предмети", href: "/subjects/", icon: <Captions />}, 
         {name: "Професори", href: "/professors/", icon: <UserRound />},
         {name: "Студенти", href: "/students/", icon: <UsersRound />},
-        {name: "Региструј Студента", href: "/register/student", icon: <UsersRound />},
-        {name: "Додај Студента", href: "/stud/add", icon: <UsersRound />},
       ] 
     },
     { 
@@ -52,6 +51,8 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
       links: [
         {name: "Универзитети", href: "/universities/", icon: <GraduationCap />}, 
         {name: "Факултети", href: "/faculties/", icon: <BookOpen />},
+        {name: "Службе", href: "/services/", icon: <FolderKanban />},
+        {name: "Служба - нов налог", href: "/auth/register/service", icon: <FolderKanban />},
         {name: "Контрола", href: "/a", icon: <Fingerprint />},
       ] 
     },
@@ -60,7 +61,7 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
       links: [
         {name: "Факултети", href: "http://localhost:3000/", icon: <ChartNoAxesColumn />},
         {name: "Професори", href: "http://localhost:3000/", icon: <ChartNoAxesColumn />},
-        {name: "Студенти", href: "/auth/login", icon: <ChartNoAxesColumn />}
+        {name: "Студенти", href: "/auth/login", icon: <ChartNoAxesColumn />},
       ] 
     },
     { 

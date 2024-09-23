@@ -15,7 +15,7 @@ const Profile = () => {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 
   return (
@@ -61,7 +61,7 @@ const Profile = () => {
                 {/* Section with User Info in Card Style */}
                 <div className="bg-gray-50 rounded-lg p-6 shadow-md space-y-6">
                   <h2 className="text-2xl font-semibold text-gray-700 flex items-center gap-2">
-                    <User className="w-6 h-6 text-indigo-500" /> User Information
+                    <User className="w-6 h-6 text-indigo-500" /> Корисничке информације
                   </h2>
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-500">Username:</span>
@@ -80,9 +80,9 @@ const Profile = () => {
                 {role === 'service' && (
                   <div className="bg-gray-50 rounded-lg p-6 shadow-md">
                     <h2 className="text-2xl font-semibold text-gray-700 flex items-center gap-2">
-                      <Building className="w-6 h-6 text-blue-500" /> Managed Universities
+                      <Building className="w-6 h-6 text-blue-500" /> Службеник на
                     </h2>
-                    <p className="mt-2 text-gray-800">3 Universities, 6 Faculties</p>
+                    <p className="mt-2 text-gray-800">Random: 3 Универзитета, 6 факултета</p>
                   </div>
                 )}
               </div>

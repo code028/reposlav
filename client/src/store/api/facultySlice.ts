@@ -21,6 +21,31 @@ type GetStudentsOnFacultiesResponse = {
   studentsOnFaculty: Student[];
 };
 
+type FacultiesResponse = {
+  faculties: {
+    id: number;
+    name: string;
+    universityId: number;
+    university: {
+      id: number;
+      name: string;
+      location: string;
+      ownerId: number;
+    };
+    students: {
+      userId: number;
+      facultyId: number;
+      user: {
+        id: number;
+        name: string;
+        username: string;
+        email: string;
+      };
+    }[];
+  }[];
+};
+
+
 
 export const facultyApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -49,9 +74,15 @@ export const facultyApiSlice = apiSlice.injectEndpoints({
         url: `/faculty/${id}/students`,
         method: 'GET',
       }),
+    }),
+    getStudentsOnFacsWhereServiceHasUserWithId: builder.query<FacultiesResponse ,string>({
+      query: (id) => ({
+        url: `/faculty/${id}/service`,
+        method: 'GET'
+      })
     })
   }),
   overrideExisting: false,
 });
 
-export const { useAddFacultyMutation, useGetFacByIdQuery, useAddStudentToFacultyMutation, useGetStudentsOnFacultiesQuery } = facultyApiSlice;
+export const { useAddFacultyMutation, useGetFacByIdQuery, useAddStudentToFacultyMutation, useGetStudentsOnFacultiesQuery, useGetStudentsOnFacsWhereServiceHasUserWithIdQuery } = facultyApiSlice;

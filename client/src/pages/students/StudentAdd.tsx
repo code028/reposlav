@@ -38,37 +38,24 @@ type University = {
   faculties: Faculty[];
 };
 
-type StudentOnFaculty = {
-  userId: number;
-  facultyId: number;
-  user: {
-    id: number;
-    name: string;
-    username: string;
-  };
-};
-
-type StudentsOnFacultiesResponse = {
-  studentsOnFaculty: StudentOnFaculty[];
-};
 
 const StudentAdd = () => {
   const navigate = useNavigate();
   const userId = useAppSelector((state) => state.user.id);
 
-  const [universities, setUniversities] = useState<University[]>();
-  const [users, setUsers] = useState<User[]>();
-  const [faculties, setFaculties] = useState<Faculty[]>();
+  const [universities, setUniversities] = useState<University[] | undefined>();
+  const [users, setUsers] = useState<User[] | undefined>();
+  const [faculties, setFaculties] = useState<Faculty[] | undefined>();
 
-  const [selectedUniversity, setSelectedUniversity] = useState<number>();
-  const [selectedFaculty, setSelectedFaculty] = useState<number>();
+  const [selectedUniversity, setSelectedUniversity] = useState<number | undefined>();
+  const [selectedFaculty, setSelectedFaculty] = useState<number | undefined>();
   const [selectedStudents, setSelectedStudents] = useState<User[]>([]);
 
   const { data: universitiesData, isLoading: isLoadingUniversities } = useGetUnisByServiceWhereUserIdQuery(userId);
-
   const { data: allUsers, isLoading: isLoadingUsers } = useGetUsersByRoleQuery('user');
 
-  const { data: studentsOnFaculties = { studentsOnFaculty: [] } as StudentsOnFacultiesResponse, isLoading: isLoadingStudents } = useGetStudentsOnFacultiesQuery(
+  // Preuzimanje studenata koji su već na fakultetu
+  const { data: studentsOnFaculties, isLoading: isLoadingStudents } = useGetStudentsOnFacultiesQuery(
     selectedFaculty?.toString() || "",
     {
       skip: !selectedFaculty,
@@ -103,16 +90,18 @@ const StudentAdd = () => {
     return <div>Učitavanje univerziteta i korisnika...</div>;
   }
 
-  // Proveri da li je studentsOnFaculties ispravno popunjen pre nego što primeniš filter
-  const filteredUsers = users || [];
-  const filteredStudentsOnFaculty = studentsOnFaculties.studentsOnFaculty || [];
+  // Proveri da li su studenti na fakultetu učitani pre filtriranja
+  const filteredStudentsOnFaculty = studentsOnFaculties?.studentsOnFaculty || [];
 
   // Filtriramo studente koji nisu već na fakultetu
-  const availableStudents = (users?.filter((user) => {
-    // Proveravamo da li student postoji u listi studenata na fakultetu
+  const availableStudents = users?.filter((user) => {
+    // Ako studenti nisu učitani ili nema studenata na fakultetu, prikaži sve korisnike
+    if (isLoadingStudents || !filteredStudentsOnFaculty.length) {
+      return true;
+    }
+    // Proveravamo da li student već postoji u listi studenata na fakultetu
     return !filteredStudentsOnFaculty.some((student) => student.userId === user.id);
-  })) || [];
-
+  }) || [];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -123,8 +112,8 @@ const StudentAdd = () => {
         await addStudentToFaculty({ facultyId: selectedFaculty, userId: selectedStudent.id }).unwrap();
         navigate('/students/');
       }
-    } catch (error:any) {
-      if(error.status === 403){
+    } catch (error: any) {
+      if (error.status === 403) {
         navigate('/stud/add');
       }
       console.error('Error adding students to faculty:', error);
@@ -186,6 +175,7 @@ const StudentAdd = () => {
                   Изаберите студента
                 </label>
                 <Select
+                  isClearable
                   options={availableStudents.map((user) => ({
                     value: user.id,
                     label: `${user.name} (${user.username})`,

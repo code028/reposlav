@@ -73,7 +73,6 @@ export const handleSubjectAddToDepartment = async (req: Request, res: Response) 
 export const handleAddProfToDep = async (req: Request, res: Response) => {
     try {
         const {userId, depId} = req.body;
-        console.log({userId, depId});
         const response = await addProfToDep(parseInt(userId), parseInt(depId));
         return res.send(response);
         

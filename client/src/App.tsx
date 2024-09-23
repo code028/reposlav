@@ -38,6 +38,11 @@ import StudentShow from "./pages/students/StudentShow";
 import ProfessorEdit from "./pages/professors/ProfessorEdit";
 import ProfessorShow from "./pages/professors/ProfessorShow";
 import ProfessorHome from "./pages/professors/ProfessorHome";
+import ServiceHome from "./pages/services/ServiceHome";
+import ServiceShow from "./pages/services/ServiceShow";
+import ServiceEdit from "./pages/services/ServiceEdit";
+import ServiceAdd from "./pages/services/ServiceAdd";
+import ServiceAddUser from "./pages/services/ServiceAddUser";
 
 
 function App() {
@@ -112,12 +117,19 @@ function App() {
 
               {/* Faculty */}
               <Route path="/uni/:id/fac/add" element={<FacultyAdd />} />
-              <Route path="/uni/:id/fac/:id/edit" element={<FacultyEdit />} />
+              <Route path="/uni/:id/fac/:id2/edit" element={<FacultyEdit />} />
               <Route path="/faculty/add" element={<CustomFacultyAdd />} />
               <Route path="/uni/:id/fac/:id2" element={<FacultyShow />} />
               <Route path="/faculties/" element={<FacultyHome />} />
 
               <Route path="/register/service" element={<RegisterService />} />
+
+              {/* Service */}
+              <Route path="/service/add" element={<ServiceAdd />} />
+              <Route path="/uni/:id/fac/:id2/service/:id3/edit" element={<ServiceEdit />} />
+              <Route path="/uni/:id/fac/:id2/service/:id3" element={<ServiceShow />} />
+              <Route path="/services/" element={<ServiceHome />} />
+              <Route path="/service/:id/add" element={<ServiceAddUser />} />
             </Route>
           </Route>
 

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllUniversitiesByOwner, getUniById, registerUniversity } from "../services/university.service";
+import { getAllUniversitiesByOwner, getAllUniversitiesByOwnerForServices, getServiceFromUniFac, getUniById, registerUniversity } from "../services/university.service";
 import { formatValidationErrors } from "../utils/validation";
 
 export const handleUniversityAdd = async (req: Request, res: Response) => {
@@ -34,11 +34,38 @@ export const handleGetAllUniversitiesByOwner = async (req: Request, res: Respons
     }
 }
 
+export const handleGetAllUniversitiesByOwnerForServices = async (req: Request, res: Response) => {
+    try {
+        const { ownerId } = req.query;
+
+        // @ts-ignore
+        const userId = parseInt(ownerId)
+        const response = await getAllUniversitiesByOwnerForServices(userId);
+        return res.send(response);
+        
+    } catch (error: any) {
+        return res.status(error.status || 500).send(error || "Internal server error");
+    }
+}
+
 export const handleGetUniById = async (req: Request, res: Response) => {
     try {
         const {id} = req.params;
         const uniId = parseInt(id); 
         const response = await getUniById(uniId);
+        return res.send(response);
+    } catch (error: any) {
+        return res.status(error.status || 500).send(error || "Internal server error");
+    }
+}
+
+export const handleGetServiceFromUniFac = async (req: Request, res: Response) => {
+    try {
+        const {id, id2, id3} = req.params;
+        const uniId = parseInt(id); 
+        const facultyId = parseInt(id2); 
+        const serviceId = parseInt(id3); 
+        const response = await getServiceFromUniFac(uniId, facultyId, serviceId);
         return res.send(response);
     } catch (error: any) {
         return res.status(error.status || 500).send(error || "Internal server error");

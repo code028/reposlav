@@ -45,6 +45,29 @@ export const getAllUniversitiesByOwner = async( ownerId: number) => {
     return {universities};
 }
 
+export const getAllUniversitiesByOwnerForServices = async (ownerId: number) => {
+    const universities = await prisma.university.findMany({
+        where: {
+            ownerId
+        },
+        include: {
+            faculties: {
+                where: {
+                    service: {
+                        is: null
+                    }
+                }
+            }
+        }
+    });
+
+    if (!universities || universities.length === 0) {
+        return { message: "Not found" };
+    }
+
+    return { universities };
+}
+
 export const getUniById = async( id: number) => {
 
     const university = await prisma.university.findUnique({
@@ -68,4 +91,55 @@ export const getUniById = async( id: number) => {
     if(!university) return newError(404, "University doesnt exist!");
 
     return {university, faculties}
+}
+
+export const getServiceFromUniFac = async( uniId: number, facultyId: number, serviceId: number) => {
+
+    const university = await prisma.university.findFirst({
+        where: {
+            faculties: {
+                some: {
+                    service: {
+                        id: serviceId
+                    }
+                }
+            }
+        },
+        include: {
+            faculties: {
+                include: {
+                    service: {
+                        include: {
+                            users:{
+                                include: {
+                                    user: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            username: true,
+                                            email: true,
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        where: {
+                            id: serviceId
+                        }
+                    }
+                },
+                where: {
+                    service: {
+                        id: serviceId
+                    }
+                }
+            }
+        }
+    });
+
+    
+
+    if(!university) return newError(404, "Service not found");
+
+    return [university];
 }

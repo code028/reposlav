@@ -84,3 +84,34 @@ export const getFacultyStudent = async (id: number) => {
 
   return { studentsOnFaculties };
 };
+
+export const getUnisWithFacsAndStudentsWhereFacsHasServerAndServiceHasUserWithId = async (id: number) => {
+  const faculties = await prisma.faculty.findMany({
+    where: {
+      service: {
+        users: {
+          some: {
+            userId: id
+          }
+        }
+      }
+    },
+    include: {
+      university: true,
+      students: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              email: true,
+            }
+          }
+        }
+      }
+    }
+  });
+  
+  return { faculties };
+};
