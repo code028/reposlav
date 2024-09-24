@@ -10,6 +10,7 @@ import { useAddFacultyMutation } from '../../store/api/facultySlice';
 
 const FacultyAdd = () => {
   const navigate = useNavigate();
+  // eslint-disable-next-line
   const [university, setUniversity] = useState<University>();
   const [name, setName] = useState("");
   const [disabled, setDisabled] = useState(false);
@@ -28,7 +29,6 @@ const FacultyAdd = () => {
 
     await addFaculty({id: parseInt(id!),name: name}).unwrap();
     setDisabled(false);
-    console.log({university, name})
     navigate(`/uni/${id}`);
   };
 

@@ -82,7 +82,6 @@ export const registerUserWithRoleService = async (userData: IRegisterUser) => {
 
     const hashPassword = await bcrypt.hash(password, parseInt(`${process.env.SALT}`))
     const role = "service"
-    console.log(role);
     // Create new user
     const newUser = await prisma.users.create({
         data: {
@@ -93,7 +92,6 @@ export const registerUserWithRoleService = async (userData: IRegisterUser) => {
             role: role
         }
     });
-    console.log(newUser.role);
 
     const { password: pass, ...fields } = newUser;
     return fields;

@@ -35,9 +35,10 @@
         dispatch(setTokens({ accessToken, refreshToken }));
         await dispatch(setUser({id: userId, username: name, email, role}));
         
-        if( role === 'user' ) navigate('/')
+        if( role === 'user' ) navigate('/archive/')
         if( role === 'service' ) navigate('/departments/')
         if( role === 'admin' ) navigate('/universities/')
+        if( role === 'professor' ) navigate('/work/add')
           
       } catch (error) {
         setDisabled(false);

@@ -21,7 +21,18 @@ const RoleGuard: React.FC<RoleGuardProps> = ({ requiredRoles }) => {
 
   useEffect(() => {
     if (data && !requiredRoles.includes(data.role)) {
-      navigate('/', { state: { from: location } });
+      if(data.role === 'admin'){
+        navigate('/universities/', { state: { from: location } });
+      }
+      if(data.role === 'service'){
+        navigate('/departments/', { state: { from: location } });
+      }
+      if(data.role === 'professor'){
+        navigate('/work/add', { state: { from: location } });
+      }
+      if(data.role === 'user'){
+        navigate('/archive/', { state: { from: location } });
+      }
     }
   }, [data, requiredRoles, navigate, location]);
 

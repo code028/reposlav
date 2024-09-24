@@ -22,7 +22,7 @@ const UniversityAdd = () => {
     event.stopPropagation();
     setDisabled(true);
     try {
-      const data = await addUni({ userId, name, location }).unwrap();
+      await addUni({ userId, name, location }).unwrap();
 
       setDisabled(false);
       navigate('/universities');

@@ -61,7 +61,6 @@ export const handleGetAllProfessorsOnDeps = async (req: Request, res: Response) 
 export const handleSubjectAddToDepartment = async (req: Request, res: Response) => {
     try {
         const {subjectId, departmentId} = req.body;
-        console.log({subjectId, departmentId});
         const response = await subjectAddToDepartment(parseInt(subjectId), parseInt(departmentId));
         return res.send(response);
         

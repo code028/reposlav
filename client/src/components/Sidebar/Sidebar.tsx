@@ -28,17 +28,21 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
   //   setTheme(theme === 'dark' ? 'light' : 'dark');
   // };
 
+  const { role: userRole }  = useAppSelector(state => state.user);
+
   const sidebarItems = [
     { 
-      label: "Професор", 
+      label: "Професор",
+      role: 'professor',
       links: [
-        {name: "Додај рад", href: "/", icon: <BadgePlus />}, 
-        {name: "Дипломски радови", href: "/a", icon: <Files />}, 
-        {name: "Архива", href: "/arhive", icon: <Archive />}
+        {name: "Додај рад", href: "/work/add", icon: <BadgePlus />}, 
+        {name: "Дипломски радови", href: "/professor/works/", icon: <Files />}, 
+        {name: "Архива", href: "/archive/", icon: <Archive />}
       ] 
     },
     { 
       label: "Служба", 
+      role: 'service',
       links: [
         {name: "Одсеци", href: "/departments/", icon: <ChartPie />}, 
         {name: "Предмети", href: "/subjects/", icon: <Captions />}, 
@@ -48,6 +52,7 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
     },
     { 
       label: "Администрација", 
+      role: 'admin',
       links: [
         {name: "Универзитети", href: "/universities/", icon: <GraduationCap />}, 
         {name: "Факултети", href: "/faculties/", icon: <BookOpen />},
@@ -65,12 +70,36 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
       ] 
     },
     { 
-      label: "Упутствo", 
+      label: "Упутствo",
+      role: 'admin',
       links: [
-        {name: "Платформа", href: "http://localhost:3000/", icon: <BadgeHelp />},
+        {name: "Платформа", href: "/guide/admin", icon: <BadgeHelp />},
+      ] 
+    },
+    { 
+      label: "Упутствo",
+      role: 'service',
+      links: [
+        {name: "Платформа", href: "/guide/service", icon: <BadgeHelp />},
+      ] 
+    },
+    { 
+      label: "Упутствo",
+      role: 'professor',
+      links: [
+        {name: "Платформа", href: "/guide/professor", icon: <BadgeHelp />},
+      ] 
+    },
+    { 
+      label: "Студент",
+      role: 'user',
+      links: [
+        {name: "Архива", href: "/archive/", icon: <Archive />},
       ] 
     }
   ];
+  
+  const filteredSidebarItems = sidebarItems.filter((item) => item.role === userRole);
 
   const dispatch = useAppDispatch();
   const refreshToken = useAppSelector((state) => state.session.refreshToken);
@@ -106,8 +135,8 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
         }
       </div>
       <div id='nebitan' className='w-full h-full flex flex-1 flex-col overflow-y-scroll overflow-x-hidden '>
-        {sidebarItems.map((item, index) => {
-          const {label , links} = item;
+        {filteredSidebarItems.map((item, index) => {
+          const {label, links} = item;
           return (
             <div key={`${index}`} className={`w-full h-fit px-3 py-2 flex flex-col gap-y-3 items-center`}>
               { isOpen === true &&  

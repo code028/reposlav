@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import NotFound from "./pages/NotFound";
-import Home from "./pages/Home";
 import ResetPassword from "./pages/auth/ResetPassword";
 import UniversityHome from "./pages/universities/UniversityHome";
 import UniversityShow from "./pages/universities/UniversityShow";
@@ -43,7 +42,14 @@ import ServiceShow from "./pages/services/ServiceShow";
 import ServiceEdit from "./pages/services/ServiceEdit";
 import ServiceAdd from "./pages/services/ServiceAdd";
 import ServiceAddUser from "./pages/services/ServiceAddUser";
-
+import WorkAdd from "./pages/work/WorkAdd";
+import WorkShow from "./pages/work/WorkShow";
+import WorkEdit from "./pages/work/WorkEdit";
+import WorkHome from "./pages/work/WorkHome";
+import Archive from "./pages/Archive";
+import AdminGuide from "./pages/guide/AdminGuide";
+import ServiceGuide from "./pages/guide/ServiceGuide";
+import ProfessorGuide from "./pages/guide/ProfessorGuide";
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -65,11 +71,21 @@ function App() {
         <Routes>
           {/* Protected routes */}
           <Route element={<ProtectedRoute />} >
-            <Route path="/" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/archive/" element={<Archive />} />
+            <Route path="/guide/professor" element={<ProfessorGuide />} />
+
+            <Route element={<RoleGuard requiredRoles={['professor']} />}>
+              <Route path="/work/add" element={<WorkAdd />} />
+              <Route path="/work/:id" element={<WorkShow />} />
+              <Route path="/work/:id/edit" element={<WorkEdit />} />
+              <Route path="/professor/works/" element={<WorkHome />} />
+            </Route>
 
             {/* Role protected routes */}
             <Route element={<RoleGuard requiredRoles={['admin','service']} />}>
+              <Route path="/guide/service" element={<ServiceGuide />} />
+              
               <Route path="/auth/register/student" element={<Register />} />
               <Route path="/auth/register/service" element={<RegisterService />} />
               <Route path="/auth/register/professor" element={<RegisterProfessor />} />
@@ -108,7 +124,9 @@ function App() {
               
             </Route>
             
-            <Route element={<RoleGuard requiredRoles={['admin']} />}>
+            <Route element={<RoleGuard requiredRoles={['admin']} />}>          
+              <Route path="/guide/admin" element={<AdminGuide />} />
+
               {/* University */}
               <Route path="/universities/" element={<UniversityHome />} />
               <Route path="uni/:id/" element={<UniversityShow />} />
