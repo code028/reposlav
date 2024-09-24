@@ -16,7 +16,7 @@ type FileProgressProps = {
 };
 
 // Niz dozvoljenih ekstenzija
-const allowedExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.pptx', '.sql', '.mp3', '.mp4', '.zip', '.webp', '.txt'];
+export const allowedExtensions = ['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.pptx', '.sql', '.mp3', '.mp4', '.zip', '.webp', '.txt'];
 
 // Funkcija za određivanje ikone na osnovu ekstenzije fajla
 const getFileIcon = (fileName: string) => {
@@ -73,7 +73,7 @@ const FileProgress: React.FC<FileProgressProps> = ({ fileWithProgress, onCancel,
     if (!isExtensionAllowed) {
       const timer = setTimeout(() => {
         onDelete();
-      }, 1000);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [isExtensionAllowed, onDelete]);
@@ -118,7 +118,7 @@ const FileProgress: React.FC<FileProgressProps> = ({ fileWithProgress, onCancel,
       {isUploading && (
         <>
           <div
-            className="absolute top-1/2 transform -translate-y-1/2 left-0 right-0 pl-2 pr-11"
+            className="absolute top-1/2 transform -translate-y-1/2 left-0 right-0 pl-12 pr-11"
             style={{ width: '100%' }}
           >
             <div className="bg-black h-5 z-10 w-full rounded-full">

@@ -5,13 +5,18 @@ import FormContainer from '../../components/containers/Form';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import { useAppSelector } from '../../store/hooks';
-import { Professor, Student, StudentData, useGetAllStudentsFromFacWhereProfessorWorkingQuery, useGetProfessorByIdQuery } from '../../store/api/professorSlice';
+import { Professor, StudentData, useGetAllStudentsFromFacWhereProfessorWorkingQuery, useGetProfessorByIdQuery } from '../../store/api/professorSlice';
 import FileUpload from '../../components/FileUpload';
-import FileProgress from '../../components/FileProgress';
+import FileProgress, { allowedExtensions } from '../../components/FileProgress';
+import { useAddStudentMutation } from '../../store/api/studentSlice';
+import { useAddWorkMutation } from '../../store/api/workSlice';
+import { FileDataReq, useAddFileMutation } from '../../store/api/fileSlice';
+import { useNavigate } from 'react-router-dom';
 
 type StudentInfo = {
   id: number;
   name: string;
+  username: string,
   email: string;
   universityId: number;
   university: string;
@@ -19,7 +24,16 @@ type StudentInfo = {
   faculty: string;
 };
 
+const workGradeOptions = [
+  { value: 6, label: "6 - Шест" },
+  { value: 7, label: "7 - Седам" },
+  { value: 8, label: "8 - Осам" },
+  { value: 9, label: "9 - Девет" },
+  { value: 10, label: "10 - Десет" },
+]
+
 const WorkAdd = () => {
+  const navigate = useNavigate();
   const { id: professorId } = useAppSelector(state => state.user);
   const [disabled, setDisabled] = useState<boolean>(false);
 
@@ -27,13 +41,30 @@ const WorkAdd = () => {
   const [students, setStudents] = useState<StudentData[]>([]);
 
   const [selectedStudent, setSelectedStudent] = useState<StudentInfo>();
-  const [thesisName, setThesisName] = useState<String>("");
-  const [selectedStudieLevel, setSelectedStudieLevel] = useState<Student>();
-  const [indexNumber, setIndexNumber] = useState<String>("");
+  const [workName, setWorkName] = useState<string>("");
+  const [workType, setWorkType] = useState<string>("");
+  const [studentIndexNumber, setStudentIndexNumber] = useState<string>("");
+  const [workGrade, setWorkGrade] = useState<number>();
   const [uploadedFiles, setUploadedFiles] = useState<FileWithProgress[]>([]);
+
+  const formData = new FormData();
 
   const { data: professorData } = useGetProfessorByIdQuery(professorId);
   const { data: studentsData } = useGetAllStudentsFromFacWhereProfessorWorkingQuery(professorId);
+
+  // Dodavanje studenta
+  const [addStudent, {isLoading: studentAddLoading}] = useAddStudentMutation();
+  // Dodavanje rada
+  const [addWork, {isLoading: workAddLoading}] = useAddWorkMutation();
+  // Dodavanje fajla
+  const [addFile, {isLoading: fileAddLoading}] = useAddFileMutation();
+
+  // Onemogucavamo formu dok se obradjuje zahtev forme
+  useEffect(() => {
+    if(studentAddLoading || workAddLoading || fileAddLoading){
+      setDisabled(true)
+    }
+  }, [studentAddLoading, workAddLoading, fileAddLoading])
 
   // Ucitavanje profesora
   useEffect(() => {
@@ -56,6 +87,7 @@ const WorkAdd = () => {
     .map(student => ({
       id: student.student.id,
       name: student.student.name,
+      username: student.student.username,
       email: student.student.email,
       universityId: student.university.id,
       university: student.university.name,
@@ -63,9 +95,9 @@ const WorkAdd = () => {
       faculty: student.faculty.name
     }));
 
-  const studieLevelOptions = [
+  const workTypes = [
     { value: "diplomski", label: "Дипломски рад" },
-    { value: "masterRad", label: "Мастер рад" },
+    { value: "masters", label: "Мастер рад" },
   ]
 
   type FileWithProgress = {
@@ -120,27 +152,165 @@ const WorkAdd = () => {
   useEffect(() => {
     const isFormValid =
       selectedStudent !== null &&
-      selectedStudieLevel !== null &&
-      thesisName.trim().length > 0 &&
-      indexNumber.trim().length > 0 &&
+      workType !== null &&
+      workName !== "" &&
+      workGrade !== null &&
+      studentIndexNumber.trim().length > 0 &&
       uploadedFiles.length > 0 &&
-      uploadedFiles.every(file => file.progress === 100);
+      uploadedFiles.every(file => file.progress === 100) &&
+      uploadedFiles.filter(file => allowedExtensions.includes(file.file.type)) &&
+      uploadedFiles.filter(file => file.file.type.concat(allowedExtensions.toString()));
 
     setDisabled(!isFormValid);
-  }, [selectedStudent, selectedStudieLevel, thesisName, indexNumber, uploadedFiles]);
+  }, [selectedStudent, workName, workType, workGrade, studentIndexNumber, uploadedFiles]);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const getFilePath = (fileName: string): string => {
+    const name = fileName.slice(0, fileName.lastIndexOf('.'));
+    const extension = fileName.slice(fileName.lastIndexOf('.') + 1);
+    const path = `${name}.${extension}`;
+    return path;
+  }; 
+
+  const handleAddFile = async ({name, size, type, workId, path} : FileDataReq) => {
+    await addFile({ name, size, type, workId, path });
+  }
+
+  // Submitanje forme
+  // const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   event.stopPropagation();
+  //   setDisabled(true);
+
+  //   // Dodavanje studenta
+  //   const student = await addStudent({
+  //     studentIdFK: selectedStudent?.id!,
+  //     studentIndex: studentIndexNumber,
+  //     name: selectedStudent?.name!,
+  //     username: selectedStudent?.username!,
+  //     email: selectedStudent?.email!,
+  //     universityId: selectedStudent?.universityId!,
+  //     universityName: selectedStudent?.university!,
+  //     facultyId: selectedStudent?.facultyId!,
+  //     facultyName: selectedStudent?.faculty!
+  //   }).unwrap();
+    
+  //   // Dodavanje Radova
+  //   const work = await addWork({
+  //     studentId: student[0].id,
+  //     name: workName,
+  //     // @ts-ignore
+  //     grade: workGrade.value,
+  //     // @ts-ignore
+  //     type: workType.value
+  //   }).unwrap();
+    
+  //   const formData = new FormData();
+  //   formData.append('workId', work[0].id); 
+  //   formData.append('studentIdFK', student[0].id);
+  //   formData.append('year', new Date().getFullYear().toString());
+  //   formData.append('universityId', student[0].universityId.toString());
+  //   formData.append('facultyId', student[0].facultyId.toString());
+
+  //   // Dodavanje fajlova
+  //   for(const file of uploadedFiles){
+  //     formData.append('files', file.file);
+  //     const { name, size, type } = file.file;
+  //     // @ts-ignore
+  //     const workId = work[0].id;
+  //     const year = new Date().getFullYear();
+      
+  //     const filePath = getFilePath(name);
+      
+  //     const path = `/uploads/private/works/${year}/${student[0].universityId}/${student[0].facultyId}/${work[0].id}/files/${filePath}`;
+  //     formData.append('filePath', path);
+
+  //     await handleAddFile({ name, size, type, workId, path });
+  //   }
+
+  //   try {
+  //     const response = await fetch('/api/upload', {
+  //       method: 'POST',
+  //       body: formData, // Šalje FormData koji sadrži fajlove i podatke
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Greška prilikom upload-a');
+  //     }
+
+  //     const result = await response.json();
+  //     console.log("Uspesno dodati fajlovi")
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+    
+  //   setDisabled(false);
+  // };
+
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     setDisabled(true);
-    console.log({ professor, selectedStudent, thesisName, uploadedFiles });
+  
+    // Dodavanje studenta
+    const student = await addStudent({
+      studentIdFK: selectedStudent?.id!,
+      studentIndex: studentIndexNumber,
+      name: selectedStudent?.name!,
+      username: selectedStudent?.username!,
+      email: selectedStudent?.email!,
+      universityId: selectedStudent?.universityId!,
+      universityName: selectedStudent?.university!,
+      facultyId: selectedStudent?.facultyId!,
+      facultyName: selectedStudent?.faculty!
+    }).unwrap();
+  
+    // Dodavanje Radova
+    const work = await addWork({
+      studentId: student[0].id,
+      name: workName.trim(),
+      // @ts-ignore
+      grade: workGrade.value,
+      // @ts-ignore
+      type: workType.value
+    }).unwrap();
+  
+    const formData = new FormData();
+    formData.append('workId', work[0].id.toString()); 
+    formData.append('studentIdFK', student[0].id.toString());  
+    formData.append('year', new Date().getFullYear().toString());
+    formData.append('universityId', student[0].universityId.toString());  
+    formData.append('facultyId', student[0].facultyId.toString());  
+  
+    // Dodavanje fajlova
+    for (const file of uploadedFiles) {
+      formData.append('files', file.file);  // Dodaj svaki fajl
+    }
+  
+    try {
+      const response = await fetch('http://localhost:1389/upload/work', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Greška prilikom upload-a');
+      }
+  
+      const result = await response.json();
+      console.log("Uspešno dodati fajlovi", result.files);
+      navigate('/archive/');
+    } catch (error: any) {
+      console.log('Greška:', error.message);
+    }
+  
     setDisabled(false);
   };
+  
 
   return (
     <MainLayout>
       <div className='w-full h-screen min-h-screen bg-secondary-custom sm:py-5 py-0 md:p-10 flex flex-col items-center overflow-y-scroll'>
-        <FormContainer className='bg-bg-l-primary md:w-10/12 lg:w-10/12 xl:w-8/12'>
+        <FormContainer className='bg-bg-l-primary md:w-full lg:w-11/12 xl:w-8/12'>
           <form method="POST" onSubmit={handleFormSubmit}>
             <div className="w-full flex flex-col gap-y-3">
               <Input id="professorName" type="text" label="Име професора" value={professor?.name} className='text-gray-600 font-semibold ' disabled />
@@ -165,7 +335,8 @@ const WorkAdd = () => {
                   />
                 </div>
               }
-              {studieLevelOptions &&
+              <Input id="studentIndexNumber" type="text" label="Студентов број индекса" value={studentIndexNumber} setValue={setStudentIndexNumber} />
+              {workTypes &&
                 <div>
                   <label htmlFor="professorSelect" className="text-[#9e9e9e] text-sm font-semibold">
                     Изаберите тип рада
@@ -174,20 +345,36 @@ const WorkAdd = () => {
                     id="studieLevelSelect"
                     isClearable
                     // @ts-ignore
-                    options={studieLevelOptions}
-                    value={selectedStudieLevel}
+                    options={workTypes}
+                    value={workType}
                     // @ts-ignore
-                    onChange={(selectedOption) => setSelectedStudieLevel(selectedOption)}
+                    onChange={(selectedOption) => setWorkType(selectedOption)}
                     className="mt-1"
                     placeholder="Изаберите тип рада"
                     required
                   />
                 </div>
               }
-              <Input id="studentIndexNumber" type="text" label="Број индекса студента" value={indexNumber} setValue={setIndexNumber} />
-              <Input id="thesisName" type="text" label="Наслов теме" value={thesisName} setValue={setThesisName} />
+              <Input id="workName" type="text" label="Наслов теме" value={workName} setValue={setWorkName} />
+              {/* Ocena rada */}
+              <div>
+                <label htmlFor="professorSelect" className="text-[#9e9e9e] text-sm font-semibold">
+                  Оцена рада
+                </label>
+                <Select
+                  id="workGrade"
+                  isClearable
+                  // @ts-ignore
+                  options={workGradeOptions}
+                  value={workGrade}
+                  // @ts-ignore
+                  onChange={(selectedOption) => setWorkGrade(selectedOption)}
+                  className="mt-1"
+                  placeholder="Изаберите оцену рада"
+                />
+              </div>
             </div>
-            <div className='flex flex-col gap-5 py-5'>
+            <div className='flex flex-col gap-5 pt-5 pb-3'>
               <FileUpload onFileUpload={simulateFileUpload} onCancelFile={handleCancelFile} />
               <div className='grid sm:grid-cols-1 lg:grid-cols-2 gap-2 px-5'>
                 {uploadedFiles.map((fileWithProgress, index) => (

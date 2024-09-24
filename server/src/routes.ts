@@ -17,6 +17,9 @@ import { departmentRouter } from "./routers/department.route";
 import { subjectRouter } from "./routers/subjects.route";
 import { serviceRouter } from "./routers/service.route";
 import { professorRouter } from "./routers/professor.route";
+import { studentRouter } from "./routers/student.route";
+import { workRouter } from "./routers/work.route";
+import { fileRouter } from "./routers/file.route";
 
 export default function (app: Express) {
     app.get("/status", (req: Request, res: Response) => {
@@ -36,6 +39,10 @@ export default function (app: Express) {
     app.use("/auth", sessionRouter);
     app.use("/user", authGuard, userRouter);
     app.use("/professor", authGuard, professorRouter);
+
+    app.use("/student", authGuard, roleGuard({requiredRoles: ['professor']}), studentRouter);
+    app.use("/work", authGuard, roleGuard({requiredRoles: ['professor']}), workRouter);
+    app.use("/file", authGuard, roleGuard({requiredRoles: ['professor']}), fileRouter);
     
     app.use("/university", authGuard, roleGuard({requiredRoles: ['admin', 'service']}), universityRouter);
     app.use("/faculty", authGuard, facultyRouter);

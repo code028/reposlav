@@ -36,7 +36,7 @@ const Sidebar: React.FC<ISidebar> = ({isOpen, setIsOpen}) => {
       role: 'professor',
       links: [
         {name: "Додај рад", href: "/work/add", icon: <BadgePlus />}, 
-        {name: "Дипломски радови", href: "/professor/works/", icon: <Files />}, 
+        // {name: "Дипломски радови", href: "/professor/works/", icon: <Files />}, 
         {name: "Архива", href: "/archive/", icon: <Archive />}
       ] 
     },
